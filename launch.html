@@ -1,57 +1,49 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>聖瑪智慧排床系統 - SMART Launch</title>
-  <script src="https://cdn.jsdelivr.net/npm/fhirclient@5/build/fhir-client.js"></script>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-    .launch-container {
-      background: rgba(255,255,255,0.1);
-      backdrop-filter: blur(20px);
-      padding: 40px;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.2);
-    }
-    .logo {
-      font-size: 3em;
-      margin-bottom: 20px;
-    }
-    .loading {
-      font-size: 1.2em;
-      margin: 20px 0;
-    }
-    .spinner {
-      border: 4px solid rgba(255,255,255,0.3);
-      border-top: 4px solid white;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 20px auto;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>啟動中 - 聖瑪智慧排床系統</title>
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
 </head>
 <body>
-  <div class="launch-container">
-    <div class="logo">🛏️ 聖瑪智慧排床</div>
-    <h2>SMART on FHIR 啟動中...</h2>
-    <div class="loading">正在連線 THAS FHIR Server</div>
-    <div class="spinner"></div>
-    <p>目標：https://thas.mohw.gov.tw/v/r4/fhir</p>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif; color: #666;">
+        <div class="loader"></div>
+        <p>正在連線至聖瑪 FHIR 伺服器並驗證權限...</p>
+    </div>
+
+    <style>
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #764ba2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+
+    <script>
+        // 執行 SMART on FHIR 啟動程序
+        FHIR.oauth2.authorize({
+            // 這是你在 FHIR Server 上註冊的 Client ID
+            // 若在測試環境（如 THAS Sandbox）通常可以自定義或使用預設值
+            clientId: "st_mary_bed_manager_v2", 
+
+            // 請求的權限範圍：
+            // launch: 啟動上下文
+            // openid / fhirUser: 使用者資訊
+            // patient/*.read: 讀取病患資料
+            // encounter.read: 讀取就醫紀錄（排床用）
+            scope: "launch openid fhirUser patient/*.read encounter.read location.read",
+
+            // 授權成功後跳轉回主程式頁面
+            redirectUri: "index.html" 
+        });
+    </script>
+</body>
+</html>
